@@ -1,0 +1,64 @@
+//pipefile
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'filter'
+})
+export class FilterPipe implements PipeTransform {
+  transform(value: any, args?: any): any {
+  if(!value)return null
+   
+  if(!args)return value;
+
+  args = args.toLowerCase();
+
+  return value.filter(function(data){
+
+      return JSON.stringify(data).toLowerCase().includes(args);
+
+  });
+ 
+}
+
+}
+//htmlfile
+<div class="container">
+  <div class="row">
+    <div class="search-hero">
+      <input type="text" name="search" [(ngModel)]="searchText" placeholder="search">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">First</th>
+            <th scope="col">Last</th>
+          </tr>
+        </thead>
+        <tbody>
+         
+          <tr *ngFor="let item of tokens | filter: searchText">
+            <th scope="row">{{item.tokenSymbol}}</th>
+            <td colspan="2">{{item.tokenAddress}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+
+tsfile
+searchText:string
+ ngOnInit() {
+    this.getUserTokenDetails()
+  }
+
+
+  getUserTokenDetails() {
+    this.apiService.getData("user/get_token").subscribe((success: any) => {
+      console.log(
+        "🚀 ~ file: view-page.component.ts ~ line 51 ~ ViewPageComponent ~ this.apiService.getData ~  success.message",
+        success.message
+      );
+      this.tokens = success.message;})
+
